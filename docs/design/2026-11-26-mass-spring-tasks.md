@@ -19,7 +19,8 @@ baseline, are the result, including where the body does not help.
 Implemented in `poise/massspring.py`, all parameters from one seed (`make_network(seed)`):
 
 - 30 point masses of 1 kg placed uniformly at random in the unit square.
-- Each mass is joined to its 3 nearest masses; a pair is joined once. Rest length = initial distance.
+- Each mass is joined to its 5 nearest masses; a pair is joined once. Rest length = initial distance.
+  (The first version used 3; see "Change after the first run" below.)
 - Each spring has a nonlinear force along its length,
   `f = k1·s + k3·s³ + d1·r + d3·r³`, where `s` is the stretch (length − rest length) and `r` the rate
   of change of the length. Coefficients drawn uniformly: `k1` in [1, 100], `k3` in [1, 200],
@@ -81,7 +82,41 @@ of what the body contributes.
   1e-9; 1e-7 leaves a margin while still catching any real change.
 - **Physics.** With no input, a network at rest stays exactly at rest; a network released from a
   displaced position comes to rest because of the damping.
+- **Rigidity.** The free masses cannot move without changing some spring length (to first order):
+  the matrix of spring directions restricted to the free masses has full rank.
+
+## Change after the first run
+
+The first run used 3 nearest masses per mass (57 springs). It gave a memory capacity of 0.09 for the body
+(baseline 0.03) and a NARMA2 error of 81.5 (baseline 0.40): the readout failed on the test part. The cause
+was not the task but the body: springs resist only changes of length, and with so few springs the network
+had 5 **floppy modes** (ways for the free masses to move without stretching any spring). Parts of the body
+drifted slowly instead of returning to rest, so the state was not stationary.
+
+The number of neighbours was then chosen by a physical criterion, not by the scores: the smallest number
+for which the networks of seeds 1, 2 and 3 have no floppy mode. With 4, seed 1 still had one; with 5, none
+had any. A test now checks this (rigidity, above). Nothing else in the setup was changed.
 
 ## Results
 
-(Added after the measurements.)
+Measured on 2026-11-26 with `uv run python scripts/measure_mass_spring.py` (network seed 1: 30 masses,
+87 springs). The tests store these values and check them on Linux, macOS and Windows.
+
+| Task | Body (mass-spring network) | Baseline (current input only) |
+|---|---|---|
+| Memory capacity, delays 1–30 (higher is better) | **5.74** | 0.03 |
+| NARMA2, normalised mean squared error (lower is better) | **0.347** | 0.401 |
+
+Squared correlation per delay for the body: 0.49 at delay 1, 0.29 at delay 4, 0.20 at delay 10,
+0.14 at delay 20, 0.12 at delay 30. The curve has not reached zero at delay 30, so the memory capacity
+summed up to 30 is a lower value than the sum over all delays.
+
+What this shows, and what it does not:
+
+- The body holds a fading trace of past inputs that the input alone does not have. This is the property
+  a physical reservoir relies on.
+- On NARMA2 the body lowers the error only a little (0.347 against 0.401). Much of NARMA2 depends on the
+  current input, which the baseline already sees; the body does not yet provide the nonlinear
+  combination of past values well.
+- These are one network and one seed of each input. No parameter was tuned on the scores. Spread over
+  seeds, input strength, and sampling interval is not measured yet.

@@ -31,7 +31,7 @@ class NetworkParams:
     """Parameters of a random network. Ranges are (low, high), drawn uniformly."""
 
     n_masses: int = 30
-    n_neighbours: int = 3  # each mass is joined to its nearest masses (pairs are not repeated)
+    n_neighbours: int = 5  # each mass is joined to its nearest masses (pairs are not repeated)
     n_fixed: int = 4  # the masses with the smallest x are fixed
     input_fraction: float = 0.2  # fraction of the free masses that receive the input force
     k1: tuple[float, float] = (1.0, 100.0)  # linear spring coefficient
@@ -124,17 +124,18 @@ def make_network(seed: int, params: NetworkParams | None = None) -> Network:
                    inc_spring, inc_sign)
 
 
-def simulate(net: Network, inputs: np.ndarray) -> np.ndarray:
+def simulate(net: Network, inputs: np.ndarray, pos_init: np.ndarray | None = None) -> np.ndarray:
     """Drive the network with one input value per sample and return spring lengths per sample.
 
     Each input value is held for ``steps_per_sample`` steps of semi-implicit Euler (velocity first,
     then position with the new velocity). The lengths are read at the end of each sample.
-    Returns an array of shape (len(inputs), n_springs).
+    The run starts at rest, at ``pos_init`` (default: the rest positions). Fixed masses should be
+    left at their rest positions. Returns an array of shape (len(inputs), n_springs).
     """
     p = net.params
     dt = p.dt
     dt_over_m = dt / p.mass
-    pos = net.pos0.copy()
+    pos = (net.pos0 if pos_init is None else np.asarray(pos_init, dtype=np.float64)).copy()
     vel = np.zeros_like(pos)
     free2 = np.stack([net.free, net.free], axis=1)
     si, sj = net.spring_i, net.spring_j
