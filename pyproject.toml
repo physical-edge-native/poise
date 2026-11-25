@@ -1,0 +1,20 @@
+[project]
+name = "poise"
+version = "0.0.0"
+description = "Trials of physical reservoir computing for robot control: a soft body used as part of the computation"
+readme = "README.md"
+license = "MIT OR Apache-2.0"
+requires-python = ">=3.14"
+dependencies = [
+    "numpy",
+]
+
+[dependency-groups]
+dev = ["pytest"]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
