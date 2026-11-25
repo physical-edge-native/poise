@@ -5,6 +5,8 @@ computation. Part of the [Physical-Edge Native Architecture](https://physical-ed
 
 **Status: just started. Nothing here yet.**
 
+Scope and decisions: [docs/design/2026-11-25-scope.md](docs/design/2026-11-25-scope.md).
+
 ## License
 
 Licensed under either of
