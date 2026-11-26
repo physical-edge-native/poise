@@ -25,8 +25,14 @@ Implemented in `poise/massspring.py`, all parameters from one seed (`make_networ
   `f = k1·s + k3·s³ + d1·r + d3·r³`, where `s` is the stretch (length − rest length) and `r` the rate
   of change of the length. Coefficients drawn uniformly: `k1` in [1, 100], `k3` in [1, 200],
   `d1` in [1, 10], `d3` in [1, 10]. This follows the kind of network used in the literature on
-  compliant bodies as reservoirs (Hauser et al., 2011); the values are our own choice and were **not**
-  checked against that paper.
+  compliant bodies as reservoirs (Hauser et al., 2011); the values are our own choice. When this
+  record was written they had not been checked against that paper. Checked later (2026-11-26, #11;
+  see `docs/research/2026-11-26-prior-work.md`): the paper also uses 30 masses, the same spring law,
+  spring lengths as the state, a 1 ms step and an input-only baseline, but joins springs by Delaunay
+  triangulation (78 springs), fixes 2 masses, draws `k1` and `d1` log-uniformly in [1, 100] and `k3`
+  and `d3` in [100, 200] (so poise's damping and cubic terms are much weaker), integrates with
+  4th-order Runge–Kutta, drives with a product of sines, and picks the best of 400 networks. poise
+  measures one network (seed 1) and does not select among networks.
 - The 4 masses with the smallest x are fixed.
 - 20 % of the free masses (5 masses) receive the input as a horizontal force `w·u(t)`, with a weight
   `w` per mass drawn uniformly in [−1, 1].
