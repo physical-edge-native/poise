@@ -64,4 +64,32 @@ including where the body is worse, are the result.
 
 ## Results
 
-(Added after the measurements.)
+Measured on 2026-11-27 with `uv run python scripts/measure_mass_spring.py`. Nothing in the setup above was
+changed after measuring. The tests store these values and check them on Linux, macOS and Windows.
+
+| Readout on | Features | Memory capacity, delays 1–30 (higher is better) | NARMA2 NMSE (lower is better) |
+|---|---|---|---|
+| current input only | 1 | 0.03 | 0.401 |
+| **mass-spring network** (body) | 87 | **5.74** | **0.347** |
+| D87: `u(t) … u(t−86)` | 87 | 30.00 | 0.156 |
+| D-val: `u(t) … u(t−K)`, K by validation | ≤ 87 | 30.00 | 0.153 (K = 8) |
+| P3: products up to degree 3 of a window of length L | ≤ 83 | 5.03 | 0.004 (L = 6) |
+
+Chosen lengths for memory capacity: D-val takes the smallest K that contains the delay (1, 2, 4, 8, 16, 32);
+P3 recalls delays 1–5 fully and nothing beyond its window (its choices for longer delays are among
+near-zero validation scores).
+
+What this shows:
+
+- All three expectations written before measuring held.
+- **Memory.** A delay line of the same size as the body recalls every delay up to 30 perfectly, so it beats
+  the body by construction; the useful comparison is the shape. The body's 5.74 is spread thinly over many
+  delays (0.49 at delay 1, still 0.12 at delay 30), while a window of five past inputs reaches about the same
+  total by recalling five delays exactly.
+- **NARMA2.** The body (0.347) is worse than a linear readout on the last nine inputs (0.153) and much worse
+  than the cubic polynomial window (0.004). On this task, with this network and these settings, the body
+  provides less useful memory than a short delay line and no useful nonlinearity beyond what explicit
+  products give. This is a negative result for the body, and it is the result.
+- What it does not show: this is one network with weak damping and weak cubic terms compared with Hauser et
+  al. (2011), one input scale, and one sampling interval. Information processing capacity (#13) and the
+  network with Hauser et al.'s settings (#14) are the next measurements to tell why.
