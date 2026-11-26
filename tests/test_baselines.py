@@ -47,6 +47,13 @@ def test_choice_prefers_shorter_on_tie():
     assert c.param == 3  # the first in the given order wins a tie; the choices are listed shortest first
 
 
+def test_choice_treats_rounding_level_differences_as_a_tie():
+    u = np.random.default_rng(0).random(3200)
+    scores = iter([1.0, 1.0 + 2e-16, 1.0 + 4e-16])  # validation scores of params 1, 2, 3, then the test score
+    c = baselines.choose_and_test(lambda p: u[:, None], (1, 2, 3), u, lambda a, b: next(scores, 0.5), True)
+    assert c.param == 1
+
+
 @pytest.fixture(scope="module")
 def results():
     return baselines.run_all()

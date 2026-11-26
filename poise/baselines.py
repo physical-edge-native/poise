@@ -18,6 +18,7 @@ D_FULL = 86  # D87: u(t) .. u(t-86), as many features as the body has springs
 D_CHOICES = (0, 1, 2, 4, 8, 16, 32, 64, 86)  # D-val: K in u(t) .. u(t-K)
 P_CHOICES = (1, 2, 3, 4, 5, 6)  # P3: window length L
 P_DEGREE = 3
+TIE_RTOL = 1e-9  # validation scores this close (relative) to the best count as a tie
 N_FIT = 1500  # validation: fit on the first N_FIT training samples, score on the rest
 
 
@@ -65,16 +66,21 @@ def choose_and_test(
 ) -> Choice:
     """Pick the parameter by validation inside the training part, refit on it, score on the test part.
 
-    On an exact tie the earlier (shorter) parameter wins.
+    Validation scores within ``TIE_RTOL`` (relative) of the best count as a tie, and the earliest
+    (shortest) parameter among them wins. Without this, two windows that both contain the target, with
+    scores differing only by rounding (about 1e-16), would be chosen differently on different systems.
     """
     y_train, y_test = tasks._split(target)
-    best_param, best_val = None, None
+    vals = []
     for p in params:
         f_train, _ = tasks._split(make_features(p))
-        val = _fit_score(f_train[:N_FIT], y_train[:N_FIT], f_train[N_FIT:], y_train[N_FIT:], score)
-        better = best_val is None or (val > best_val if higher_is_better else val < best_val)
-        if better:
-            best_param, best_val = p, val
+        vals.append(_fit_score(f_train[:N_FIT], y_train[:N_FIT], f_train[N_FIT:], y_train[N_FIT:], score))
+    best = max(vals) if higher_is_better else min(vals)
+    margin = TIE_RTOL * max(abs(best), 1e-300)
+    for p, val in zip(params, vals):
+        if (val >= best - margin) if higher_is_better else (val <= best + margin):
+            best_param = p
+            break
     f_train, f_test = tasks._split(make_features(best_param))
     return Choice(best_param, _fit_score(f_train, y_train, f_test, y_test, score))
 

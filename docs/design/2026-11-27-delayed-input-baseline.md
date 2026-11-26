@@ -36,7 +36,8 @@ Three baselines are added:
 
 - **Validation** uses only the training part: fit on its first 1500 samples, score on its last 500
   (squared correlation for memory capacity, normalised mean squared error for NARMA2), pick the best
-  length (the shorter one on an exact tie), then refit on the whole training part. The test part is never
+  length (the shorter one on an exact tie; changed after the first CI run to a relative tolerance of 1e-9,
+  see "Change after the first CI run"), then refit on the whole training part. The test part is never
   used to choose. For memory capacity the length is chosen separately for each delay.
 - **P3** with `L = 6` has 6 + 21 + 56 = 83 features, fewer than the body's 87. Products include squares
   and cubes of the same input (monomials with repetition).
@@ -61,6 +62,15 @@ including where the body is worse, are the result.
   same relative tolerance as before (1e-7) and the same reason (the readout uses BLAS and LAPACK, which
   round differently on different systems). The chosen window lengths are stored and must match exactly.
 - Unit tests: the delay-line and polynomial features have the expected shape and values on a small input.
+
+## Change after the first CI run
+
+The first CI run passed on Linux and Windows but failed on macOS: for memory capacity at delay 2, Linux
+chose K = 2 and macOS chose K = 4. Both windows contain `u(t−2)`, so both validation scores are 1 up to
+rounding (they differed by about 2e-16), and the "exact tie" rule picked whichever happened to round higher
+on each system. The rule was changed to treat validation scores within a relative 1e-9 of the best as a tie,
+with the shortest length winning. This removes rounding from the choice; it does not use the test part. On
+Linux every chosen length and every score stayed exactly the same as before the change.
 
 ## Results
 
