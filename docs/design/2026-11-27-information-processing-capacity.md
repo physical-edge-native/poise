@@ -60,4 +60,35 @@ separates linear memory (degree 1) from nonlinear processing (degrees 2 and 3).
 
 ## Results
 
-(Added after the measurements.)
+Measured on 2026-11-27 with `uv run python scripts/measure_mass_spring.py --ipc`. Nothing in the setup above
+was changed after measuring. The tests store the values for the baselines and for the body at amplitude 1.
+
+| Features | Degree 1 | Degree 2 | Degree 3 | Total | ε |
+|---|---|---|---|---|---|
+| current input only (1) | 1.001 | 0.001 | 0.002 | 1.004 | 7.7e-4 |
+| D87, `u(t) … u(t−86)` (87) | 60.000 | 0 | 0 | 60.000 | 8.3e-4 |
+| P3, window 6 (83) | 6.000 | 21.000 | 56.002 | 83.002 | 8.4e-4 |
+| **body, amplitude 1 (87)** | **9.176** | **2.046** | **0.004** | **11.226** | 6.5e-4 |
+| body, amplitude 0.25 | 10.022 | 1.537 | 0.004 | 11.563 | 7.4e-4 |
+| body, amplitude 0.5 | 9.712 | 1.816 | 0.004 | 11.532 | 6.7e-4 |
+| body, amplitude 2 | 8.361 | 1.940 | 0.004 | 10.306 | 6.5e-4 |
+| body, amplitude 4 | 7.410 | 1.096 | 0.004 | 8.510 | 8.2e-4 |
+
+Against the expectations written before measuring:
+
+- **Checks of the method held.** The input alone, D87 and P3 give the capacities their construction implies (1,
+  60 and 83). The small values above ε that should be 0 (about 0.001–0.002 in total for the input alone) show
+  what the threshold lets through by chance: the threshold is the largest of 490 surrogate values from one
+  independent input, so a few chance values a little above it remain.
+- **The body is mostly linear, as expected**: 9.2 of its 11.2 at degree 1, 2.0 at degree 2, and essentially
+  **nothing at degree 3** (0.004, the chance level). Its total, 11.2, uses about 13 % of the 87 features'
+  possible capacity: the spring lengths are strongly dependent on each other.
+- **The expectation about amplitude did not hold.** Larger inputs did not move capacity from degree 1 to
+  degrees 2 and 3: degree 3 stayed at chance level at every amplitude, degree 2 peaked near amplitude 1 and fell
+  at 4, and the total fell from 11.6 to 8.5. The cubic spring terms do not show up as degree-3 capacity in this
+  network at these amplitudes.
+- This explains the NARMA2 result of #12: the target depends on `u(t)³` and on products of past values, and the
+  body has no degree-3 capacity and little degree-2 capacity, while P3 has them by construction.
+- Not shown: why the cubic terms do not produce degree-3 capacity (weak damping and cubic coefficients compared
+  with Hauser et al. 2011 are one candidate; #14 measures a network with that paper's settings), and how the
+  capacity spreads over delays (only totals by degree are reported here).
