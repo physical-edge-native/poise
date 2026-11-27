@@ -102,6 +102,51 @@ is not merged yet; for this network it is left to a follow-up once that code is 
   rest; no floppy modes.
 - The first network's hashes and scores do not change.
 
+## Change after the first run (a check, not the setup)
+
+The check "released from a displaced position it comes to rest" was copied from the first network, which
+falls below 1 % of the initial displacement within 20 s. This network did not: it fell to 16 % in 20 s,
+then kept decaying smoothly with a time constant of about 15 s (1.1 % after 60 s, 0.04 % after 120 s,
+measured with the same displacement). Springs with a weak `k1` and a strong `d1` (both log-uniform in
+[1, 100]) relax slowly, like a weak spring in thick oil. The check was changed to 60 s and 2 %. Nothing in
+the network or the measurements was changed.
+
 ## Results
 
-To be added after measuring.
+Measured on 2026-11-27 with `uv run python scripts/measure_mass_spring.py` (seed 1: 30 masses, 10 on the
+convex hull, 77 springs). Nothing in the setup above was changed after measuring. The tests store these
+values and check them on Linux, macOS and Windows.
+
+| Readout on | Features | Memory capacity, delays 1–30 (higher is better) | NARMA2 NMSE (lower is better) |
+|---|---|---|---|
+| current input only | 1 | 0.03 | 0.401 |
+| first network (5 nearest, weak damping) | 87 | **5.74** | **0.347** |
+| **network with the settings of Hauser et al.** | 77 | 3.23 | 0.396 |
+| D87: `u(t) … u(t−86)` | 87 | 30.00 | 0.156 |
+| D-val: `u(t) … u(t−K)`, K by validation | ≤ 87 | 30.00 | 0.153 (K = 8) |
+| P3: products up to degree 3 of a window of length L | ≤ 83 | 5.03 | 0.004 (L = 6) |
+
+Squared correlation per delay for this network: 0.26 at delay 1, 0.07 at delay 2, 0.20 at delay 4, 0.10 at
+delay 9, 0.11 at delay 18, 0.07 at delay 30. It is lower than the first network's at short delays and
+falls more slowly, and it is not monotonic (delay 2 is lower than delays 3 and 4).
+
+What this shows:
+
+- The expectation on memory held: memory capacity is lower (3.23 against 5.74). The trace of past inputs
+  is weaker at short delays but has not faded at delay 30, consistent with the slow relaxation above.
+- On NARMA2 this network is **worse** than the first one (0.396 against 0.347) and about as good as the
+  current input alone (0.401). The stronger cubic springs and dampers did not give a nonlinearity that a
+  linear readout can use for this task, at this input scale.
+- So the gap to the delayed-input baselines found with the first network is not explained by the first
+  network's weak damping and cubic terms: with the paper's ranges and joining, the body does worse, not
+  better.
+
+What it does not show:
+
+- This is one network (seed 1), one input scale and one sampling interval of 20 ms. The paper selected the
+  best of 400 networks and used other inputs, integration and possibly another area; none of that is
+  reproduced, so this is not a check of the paper's results.
+- With inputs uniform in [−1, 1] and weights in [−1, 1], the input forces may be too small to stretch the
+  springs into their cubic range (stretch × k3 against k1 is not measured here). The spread over input
+  scale is a candidate for a later measurement, chosen before measuring like the others.
+- Information processing capacity is not measured for this network yet (see "Measurements").
