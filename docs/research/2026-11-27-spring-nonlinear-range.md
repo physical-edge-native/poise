@@ -74,9 +74,10 @@ Median / 99th percentile over springs and samples.
 Only a suggestion; whether to measure it is a decision for an issue (in the design records' style, choices
 written down before any score is computed):
 
-- the scales to test, fixed in advance (for example 1, 3, 10, 30), with the same scale for every body and
-  the same inputs given to the baselines (which are invariant to scale up to the standardisation of
-  features, except P3, whose products are also only rescaled);
+- the scales to test, fixed in advance (for example 1, 3, 10, 30), applied only to the force on the body
+  (the input weights), with the task targets still computed from the unscaled input. The baselines do not
+  need to be measured again: their features are standardised, so scaling the input (or, for P3, each
+  product by a power of the scale) leaves their scores unchanged;
 - a validity rule decided in advance, for example "no spring shorter than 10 % of its rest length at any
   step", with runs that break it reported as invalid instead of scored;
 - that memory capacity is expected to fall as the body becomes nonlinear (the known trade-off between memory
