@@ -66,7 +66,8 @@ All runs stayed finite (no numerical blow-up).
    1 ms is too coarse for that run. The other two runs at ×30 look acceptable, but a measurement should apply
    one rule to all of them.
 3. **Even at ×1, single springs are compressed by 3–11 %**, although the median stretch is about 0.1 %
-   (#30). The strongest deformations come from rare, large input sequences on springs near the input masses.
+   (#30). So the largest deformations are rare and come from a few springs. Which springs these are, and
+   which input sequences cause them, was not checked.
 4. Together with #30: the cubic terms start to matter at around ×10, and the model stops being trustworthy
    somewhere between ×10 and ×30. So a measurement over input scale has a usable window of about one order of
    magnitude above the current inputs, not more.
