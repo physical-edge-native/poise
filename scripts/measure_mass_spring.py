@@ -1,7 +1,7 @@
-"""Print the memory capacity and NARMA2 scores of the mass-spring network and of the baseline.
+"""Print the memory capacity and NARMA2 scores of the mass-spring networks and of the baselines.
 
 Usage: uv run python scripts/measure_mass_spring.py
-Setup and reasons: docs/design/2026-11-26-mass-spring-tasks.md
+Setup and reasons: docs/design/2026-11-26-mass-spring-tasks.md and the later records it links to
 """
 
 import sys
@@ -58,6 +58,13 @@ def main() -> None:
     print("  per delay (P3):   " + " ".join(f"{x:.3f}" for x in b.mc_p3.per_delay))
     print(f"NARMA2 NMSE        D87 {b.narma2_d87:.6f}   D-val {b.narma2_dval.test_score:.6f} (K={b.narma2_dval.param})"
           f"   P3 {b.narma2_p3.test_score:.6f} (L={b.narma2_p3.param})")
+    h = massspring.make_hauser_network(tasks.NETWORK_SEED)
+    rh = tasks.run_all(lambda u: massspring.simulate(h, u))
+    print("network with the settings of Hauser et al. 2011 (docs/design/2026-11-27-hauser-network.md):")
+    print(f"  {h.params.n_masses} masses, {h.n_springs} springs (seed {tasks.NETWORK_SEED})")
+    print(f"memory capacity   body {rh.mc_body.total:.6f}")
+    print("  per delay (body):    " + " ".join(f"{x:.3f}" for x in rh.mc_body.per_delay))
+    print(f"NARMA2 NMSE        body {rh.narma2_body:.6f}")
     if args.ipc:
         print_ipc(net)
 

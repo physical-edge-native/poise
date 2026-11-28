@@ -81,8 +81,9 @@ Against the expectations written before measuring:
   what the threshold lets through by chance: the threshold is the largest of 490 surrogate values from one
   independent input, so a few chance values a little above it remain.
 - **The body is mostly linear, as expected**: 9.2 of its 11.2 at degree 1, 2.0 at degree 2, and essentially
-  **nothing at degree 3** (0.004, the chance level). Its total, 11.2, uses about 13 % of the 87 features'
-  possible capacity: the spring lengths are strongly dependent on each other.
+  **nothing at degree 3** (0.004, the chance level). Its total, 11.2, uses about 13 % of the 84 useful
+  features' possible capacity (three of the 87 springs never change; see the erratum below): the spring
+  lengths are strongly dependent on each other.
 - **The expectation about amplitude did not hold.** Larger inputs did not move capacity from degree 1 to
   degrees 2 and 3: degree 3 stayed at chance level at every amplitude, degree 2 peaked near amplitude 1 and fell
   at 4, and the total fell from 11.6 to 8.5. The cubic spring terms do not show up as degree-3 capacity in this
@@ -92,3 +93,10 @@ Against the expectations written before measuring:
 - Not shown: why the cubic terms do not produce degree-3 capacity (weak damping and cubic coefficients compared
   with Hauser et al. 2011 are one candidate; #14 measures a network with that paper's settings), and how the
   capacity spreads over delays (only totals by degree are reported here).
+
+## Note on the feature count (2026-11-28, #37)
+
+After this record's setup was written, an erratum (#37, in `2026-11-26-mass-spring-tasks.md`) found that three
+of the body's 87 springs join two fixed masses and never change length, so the body has **84 useful features**.
+The setup above still says 87 where it states the bound and the table's feature count; the bound for the body is
+84. The measured capacities do not change (constant features add nothing to a linear readout).
