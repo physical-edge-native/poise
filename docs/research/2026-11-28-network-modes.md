@@ -50,7 +50,7 @@ The five slowest decay times are 152, 152, 5.9, 5.9 and 4.8 s for the first netw
 2. **The network with the Hauser settings is mostly overdamped.** Only 40 of 112 modes oscillate. Its strong
    linear damping (`d1` log-uniform up to 100) turns many modes into pure decays, and many are slow: 44 modes
    outlast 0.6 s and 21 outlast 2 s. This fits two earlier observations: its flat memory-capacity curve (0.26 at
-   delay 1, still 0.07–0.1 from delay 10 to 30; PR #29), and its slow relaxation after release, with a time
+   delay 1, between 0.06 and 0.12 from delay 10 to 30; PR #29), and its slow relaxation after release, with a time
    constant of about 15 s (the same record). Slow, non-oscillating decays smear past inputs together. They keep
    a trace for a long time but separate individual delays poorly.
 3. **20 of the 112 modes of the Hauser-style network decay within one sample** (τ < 20 ms). The readout sees the
