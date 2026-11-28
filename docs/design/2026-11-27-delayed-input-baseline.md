@@ -103,3 +103,15 @@ What this shows:
 - What it does not show: this is one network with weak damping and weak cubic terms compared with Hauser et
   al. (2011), one input scale, and one sampling interval. Information processing capacity (#13) and the
   network with Hauser et al.'s settings (#14) are the next measurements to tell why.
+
+## Erratum (2026-11-27, #37)
+
+Added by an AI assistant during a scheduled night run. Nothing above was changed.
+
+D87 was sized to "the number of body features (87 springs)". Three of those springs join two fixed masses
+and never change (`docs/research/2026-11-27-sensing-resolution.md`, #35), so the body has **84 useful
+features**. D87 therefore has three more useful features than the body. P3 with `L = 6` (83 features) still
+has fewer. Against the measured differences (memory capacity 30.00 against 5.74; NARMA2 0.156 against 0.347),
+three extra inputs at delays 84–86 cannot explain the gap: memory capacity counts only delays 1–30, and
+NARMA2 with D-val already chose a window of 8. The measured values do not change, and D87 is kept as it is,
+so the stored results stay comparable.

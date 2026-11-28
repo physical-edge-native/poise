@@ -126,3 +126,12 @@ What this shows, and what it does not:
   combination of past values well.
 - These are one network and one seed of each input. No parameter was tuned on the scores. Spread over
   seeds, input strength, and sampling interval is not measured yet.
+
+## Erratum (2026-11-27, #37)
+
+Added by an AI assistant during a scheduled night run. Nothing above was changed.
+
+Three of the 87 springs of the network with seed 1 join two of the four fixed masses, so their lengths never
+change (found in `docs/research/2026-11-27-sensing-resolution.md`, #35). The readout keeps such constant
+features without scaling (`poise/readout.py`), so they do not affect the results above. The body therefore
+gives the readout **84 useful features, not 87**. The measured values do not change.
